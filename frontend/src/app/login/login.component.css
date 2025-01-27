@@ -1,0 +1,186 @@
+/* Global */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f3f4f6; /* Arrière-plan doux */
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Conteneur principal du formulaire */
+.login-container {
+  max-width: 400px;
+  height: 400px;
+  margin: 100px auto;
+  padding: 40px;
+  background-color: #ffffff; /* Fond blanc */
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Ombre douce */
+  transition: all 0.3s ease;
+}
+
+.login-container:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* Ombre plus forte au survol */
+}
+
+.login-container h1 {
+  font-size: 26px;
+  color: #2a9d8f; /* Couleur verte pour le titre */
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Champs de formulaire */
+input {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 15px;
+  width: 80%;
+  margin-bottom: 40px;
+  margin-top: 30px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  border-color: #2a9d8f; /* Accentuation verte */
+  outline: none;
+  box-shadow: 0 0 8px rgba(42, 157, 143, 0.3); /* Ombre verte */
+}
+
+/* Icônes des champs */
+.icon {
+  position: relative;
+}
+
+.icon i {
+  position: absolute;
+  left: 10px;
+  top: 12px;
+  color: #aaa;
+  font-size: 18px;
+}
+
+input[type="text"],
+input[type="password"] {
+  padding-left: 40px; /* Décalage pour l'icône */
+}
+
+/* Bouton Connexion */
+.btn-connexion {
+  background-color: #2a9d8f;
+  margin-bottom: 60px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 15px 20px;
+  margin-left: 30px;
+  border: none;
+  border-radius: 8px;
+  width:80%;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.btn-connexion:hover {
+  background-color: #21867a; /* Couleur verte foncée */
+  transform: scale(1.02); /* Légère mise en avant */
+}
+
+.btn-connexion:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Liens */
+.create-account-link{
+  margin-top: 20px;
+}
+
+.create-account-link a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #2a9d8f;
+  transition: color 0.3s ease;
+}
+
+.create-account-link a:hover {
+  color: #21867a; 
+  text-decoration: underline;
+}
+
+.help-link {
+  margin-top: 30px;
+  margin-left:170px;
+}
+
+.help-link a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #2a9d8f;
+  transition: color 0.3s ease;
+}
+
+.help-link a:hover {
+  color: #21867a; /* Accentuation */
+  text-decoration: underline;
+}
+
+/* Messages d'erreur */
+.error-message {
+  color: #e63946; /* Rouge vif */
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  animation: fadeIn 0.3s ease-in; /* Apparition fluide */
+}
+
+.error-message-global {
+  color: #e63946; /* Rouge vif */
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #ffe5e5; /* Fond clair pour alerte */
+  border: 1px solid #e63946;
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Animation fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation pour le bouton au clic */
+.btn-connexion:active {
+  transform: scale(0.98); /* Légère réduction */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 20px;
+  }
+
+  .btn-connexion {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  input {
+    font-size: 14px;
+  }
+}
