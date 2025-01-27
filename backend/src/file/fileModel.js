@@ -6,7 +6,7 @@ const fileSchema = new mongoose.Schema({
     fileType: { type: String, required: true },
     filePath: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
-    requestId: { type: mongoose.Schema.Types.ObjectId, ref: 'Request', required: true }, // Référence à une demande
+    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'post', required: true }, // Référence à une post
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }      // Référence à un utilisateur
 });
 

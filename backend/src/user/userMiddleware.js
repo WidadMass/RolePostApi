@@ -50,17 +50,10 @@ const registerSchema = Joi.object({
       'string.pattern.base': 'Le numéro de téléphone doit être valide (10 chiffres).',
     }),
   role: Joi.string()
-    .valid('EMPLOYEE', 'MANAGER', 'ADMIN')
-    .default('EMPLOYEE')
+    .valid('USER', 'AUTHOR', 'ADMIN')
+    .default('USER')
     .messages({
-      'any.only': 'Le rôle doit être EMPLOYEE, MANAGER ou ADMIN.',
-    }),
-  service: Joi.string()
-    .valid('Technique', 'Commercial', 'Administration')
-    .required()
-    .messages({
-      'any.only': 'Le service doit être Technique, Commercial ou Administration.',
-      'any.required': 'Le service est obligatoire.',
+      'any.only': 'Le rôle doit être USER, AUTHOR ou ADMIN.',
     }),
 });
 

@@ -8,9 +8,11 @@ const findUserByEmail = async (email) => {
 
 // Créer un nouvel utilisateur avec un mot de passe haché
 const createUser = async (userData) => {
-  const hashedPassword = await bcrypt.hash(userData.password, 10);
-  const newUser = new User({ ...userData, password: hashedPassword });
-  return await newUser.save();
+  const newUser = new User(userData); // Le mot de passe sera haché par le middleware
+  console.log('Mot de passe en clair :', userData.password);
+  await newUser.save();
+  console.log('Mot de passe haché :', newUser.password);
+  return newUser;
 };
 
 module.exports = {

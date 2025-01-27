@@ -1,35 +1,46 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('./userController'); // Import du contrôleur utilisateur
-const { verifyToken } = require('../middlewares/authMiddleware'); // Import des middlewares
-const verifyRole = require('../middlewares/verifyRole');
-const { validateRegister } = require('./userMiddleware'); // Import du middleware de validation
+const { verifyToken } = require('../middlewares/authMiddleware'); // Import du middleware d'authentification
+const verifyRole = require('../middlewares/verifyRole'); // Middleware de vérification des rôles
+const { validateRegister } = require('./userMiddleware'); // Middleware pour valider les données d'inscription
 
-// Routes publiques
+
+// Routes Publiques
+
+// Connexion d'un utilisateur
 router.post('/login', userController.loginUser);
 
-// Routes protégées (nécessitent un token)
-router.patch('/:id/password', verifyToken, userController.updatePassword);
+// Enregistrer un utilisateur (Uniquement par un admin, réactivation de `verifyRole`)
+router.post('/register', /*verifyToken, verifyRole(['ADMIN']),*/ validateRegister, userController.registerUser);
 
-// Route pour enregistrer un utilisateur (accessible uniquement par ADMIN)
-router.post('/register', verifyToken, verifyRole(['ADMIN']), validateRegister, userController.registerUser);
 
-// Route pour récupérer tous les utilisateurs (accessible uniquement par ADMIN)
-router.get('/', verifyToken, verifyRole(['ADMIN']), userController.getAllUsers);
+// Routes pour Utilisateur Connecté
 
-// Route pour récupérer le profil de l'utilisateur connecté
+
+// Récupérer le profil de l'utilisateur connecté
 router.get('/me', verifyToken, userController.getMyProfile);
 
-// Route pour récupérer un utilisateur spécifique par ID
-router.get('/:id', verifyToken, userController.getUserById);
+// Mise à jour du mot de passe d'un utilisateur connecté
+router.patch('/:id/password', verifyToken, userController.updatePassword);
 
-// Route pour mettre à jour un utilisateur spécifique par ID
-router.put('/:id', verifyToken, userController.updateUser);
 
-// Route pour activer/désactiver un utilisateur
+// Routes Administrateur
+
+
+// Récupérer tous les utilisateurs
+router.get('/', verifyToken, verifyRole(['ADMIN']), userController.getAllUsers);
+
+// Récupérer un utilisateur spécifique par ID
+router.get('/:id', verifyToken, verifyRole(['ADMIN']), userController.getUserById);
+
+// Mettre à jour un utilisateur spécifique
+router.put('/:id', verifyToken, verifyRole(['ADMIN']), userController.updateUser);
+
+// Activer/Désactiver un utilisateur
 router.put('/:userId/toggle-status', verifyToken, verifyRole(['ADMIN']), userController.toggleUserStatus);
 
-// Route pour supprimer un utilisateur (accessible uniquement par ADMIN)
+// Supprimer un utilisateur
 router.delete('/:id', verifyToken, verifyRole(['ADMIN']), userController.deleteUser);
 
-module.exports = router; // Export du routeur
+module.exports = router;

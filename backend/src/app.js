@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoutes = require('./user/userRoutes');
-const requestRoutes = require('./request/requestRoutes'); // Importer les routes pour les demandes
+const postRoutes = require('./post/postRoutes'); // Importer les routes pour les posts
 const fileRoutes = require('../src/file/fileRoutes');
 const multer = require('multer');
 const app = express();
@@ -23,8 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //  les routes utilisateur
 app.use('/api/users', userRoutes);
 
-//les routes pour les demandes
-app.use('/api/requests', requestRoutes);
+//les routes pour les posts
+app.use('/api/posts', postRoutes);
 
 
 app.use('/api/files', fileRoutes);

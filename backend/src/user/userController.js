@@ -27,14 +27,16 @@ exports.toggleUserStatus = async (req, res) => {
     res.status(500).json({ error: `Erreur lors de la modification du statut : ${error.message}` });
   }
 };
-/**
+
+
+
 /**
  * Enregistrer un nouvel utilisateur
  * POST /api/users/register
  */
 exports.registerUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, phone, role , service } = req.body;
+    const { firstName, lastName, email, password, phone, role } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email et mot de passe sont requis.' });
@@ -46,19 +48,14 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
     }
 
-    // Hacher le mot de passe
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Créer un nouvel utilisateur
+    // Créer un nouvel utilisateur sans hacher le mot de passe ici
     const newUser = new User({
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password, // Le mot de passe sera haché par le middleware de pré-sauvegarde
       phone: phone || '',
-      role: role || 'EMPLOYEE', // Par défaut, rôle EMPLOYEE si non spécifié
-      service, // Ajouter le champ service
+      role: role || 'USER', // Par défaut, rôle USER si non spécifié
     });
 
     await newUser.save();
@@ -72,16 +69,15 @@ exports.registerUser = async (req, res) => {
         email: newUser.email,
         phone: newUser.phone,
         role: newUser.role,
-        service: newUser.service, 
         isActive: newUser.isActive,
       },
     });
   } catch (error) {
-      console.error('Erreur lors de la création de l\'utilisateur :', error);
-      res.status(500).json({ message: 'Erreur serveur.', error: error.message });
-    }
-    
+    console.error('Erreur lors de la création de l\'utilisateur :', error);
+    res.status(500).json({ message: 'Erreur serveur.', error: error.message });
+  }
 };
+
 
 /**
  * Connexion d'un utilisateur
@@ -91,24 +87,28 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Vérifications de base
     if (!email || !password) {
       return res.status(400).json({ message: 'Email et mot de passe sont requis.' });
     }
 
-    // Rechercher l'utilisateur
+    // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur introuvable.' });
     }
 
-    // Vérifier le mot de passe
+    // Comparer le mot de passe
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log('Mot de passe saisi :', password);
+    console.log('Mot de passe haché stocké :', user.password);
+    console.log('Résultat de la comparaison :', isPasswordValid);
     if (!isPasswordValid) {
+      console.log('Mot de passe incorrect.');
       return res.status(401).json({ message: 'Mot de passe incorrect.' });
     }
 
-    // Générer le token JWT
+    // Si tout est bon, générer un token (si nécessaire)
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -116,18 +116,22 @@ exports.loginUser = async (req, res) => {
     );
 
     res.status(200).json({
+      message: 'Connexion réussie.',
       token,
       user: {
         id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
+        email: user.email,
         role: user.role,
       },
     });
   } catch (error) {
+    console.error('Erreur lors de la connexion :', error);
     res.status(500).json({ message: 'Erreur serveur.', error: error.message });
   }
 };
+
 
 /**
  * Récupérer le profil de l'utilisateur connecté
@@ -135,15 +139,12 @@ exports.loginUser = async (req, res) => {
  */
 exports.getMyProfile = async (req, res) => {
   try {
-    // Récupérer l'utilisateur depuis l'ID contenu dans le token
-    const user = await User.findById(req.user.id).select('-password'); // Exclure le mot de passe pour des raisons de sécurité
+    const user = await User.findById(req.user.id).select('-password'); // Exclure le mot de passe
 
-    // Vérifier si l'utilisateur existe
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur introuvable.' });
     }
 
-    // Retourner les informations de l'utilisateur
     res.status(200).json(user);
   } catch (error) {
     console.error('Erreur lors de la récupération du profil :', error.message);
@@ -243,44 +244,24 @@ exports.updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
-    // Vérifier si les mots de passe sont fournis
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
         message: 'L\'ancien mot de passe et le nouveau mot de passe sont requis.',
       });
     }
 
-    // Vérifier que l'utilisateur existe
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user.id); // Assurez-vous que l'utilisateur est connecté
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur introuvable.' });
     }
 
-    // Vérifier si l'ancien mot de passe est correct
     const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: 'Ancien mot de passe incorrect.' });
     }
 
-    // Vérifier que le nouveau mot de passe est différent de l'ancien
-    const isSamePassword = await bcrypt.compare(newPassword, user.password);
-    if (isSamePassword) {
-      return res.status(400).json({ message: 'Le nouveau mot de passe ne peut pas être identique à l\'ancien.' });
-    }
-
-    // Vérifier la force du nouveau mot de passe (ajustable selon les besoins)
-    if (newPassword.length < 8) {
-      return res.status(400).json({
-        message: 'Le nouveau mot de passe doit contenir au moins 8 caractères.',
-      });
-    }
-
-    // Générer un nouveau mot de passe haché
     const salt = await bcrypt.genSalt(12);
-    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
-
-    // Mettre à jour le mot de passe de l'utilisateur
-    user.password = hashedNewPassword;
+    user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
 
     res.status(200).json({ message: 'Mot de passe mis à jour avec succès.' });
