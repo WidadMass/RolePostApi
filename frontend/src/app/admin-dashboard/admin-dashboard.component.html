@@ -1,0 +1,143 @@
+<main>
+  <div class="sidebar">
+    <ul>
+      <li><button (click)="openModal('profile')">Profil</button></li>
+      <li><button (click)="openModal('createPost')">Créer une publication</button></li>
+      <li><button (click)="openModal('myPosts')">Mes publications</button></li>
+      <li><button (click)="openModal('users')">Gestion des utilisateurs</button></li>
+      <li><button (click)="logout()">Se déconnecter</button></li>
+    </ul>
+  </div>
+  <div class="content">
+    <h1>Bienvenue dans l'Admin Dashboard</h1>
+    <p>Gérez vos utilisateurs, publications et paramètres depuis cette interface.</p>
+  </div>
+
+  <!-- Modale générique -->
+  <div *ngIf="modalContent" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="closeModal()">&times;</span>
+
+      <!-- Profil de l'utilisateur -->
+      <ng-container *ngIf="modalContent === 'profile'">
+        <h2>Mon profil</h2>
+        <div *ngIf="userProfile; else loadingProfile">
+          <p><strong>Nom :</strong> {{ userProfile.name }}</p>
+          <p><strong>Email :</strong> {{ userProfile.email }}</p>
+          <!-- Ajoutez d'autres informations selon votre modèle User -->
+          <!-- Vous pouvez également ajouter un bouton pour éditer le profil -->
+        </div>
+        <ng-template #loadingProfile>
+          <p>Chargement des informations du profil...</p>
+        </ng-template>
+      </ng-container>
+
+      <!-- Création de publication -->
+      <ng-container *ngIf="modalContent === 'createPost'">
+        <h2>Créer une publication</h2>
+        <form #postForm="ngForm" (ngSubmit)="createPost(postForm)">
+          <div class="form-group">
+            <input
+              type="text"
+              placeholder="Titre de la publication"
+              [(ngModel)]="newPost.title"
+              name="title"
+              required
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <textarea
+              placeholder="Contenu"
+              [(ngModel)]="newPost.content"
+              name="content"
+              required
+              class="form-control"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <input
+              type="text"
+              placeholder="Catégorie"
+              [(ngModel)]="newPost.category"
+              name="category"
+              required
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="text"
+              placeholder="Tags (séparés par des virgules)"
+              [(ngModel)]="newPost.tags"
+              name="tags"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="file"
+              name="file"
+              (change)="onFileSelected($event)"
+              class="form-control-file"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="postForm.invalid">Créer</button>
+        </form>
+      </ng-container>
+
+      <!-- Mes publications -->
+      <ng-container *ngIf="modalContent === 'myPosts'">
+        <h2>Mes publications</h2>
+        <div *ngIf="posts.length > 0; else noPosts">
+          <ul>
+            <li *ngFor="let post of posts">
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.content }}</p>
+              <p><strong>Catégorie :</strong> {{ post.category }}</p>
+              <p><strong>Tags :</strong> {{ post.tags.join(', ') }}</p>
+              <p><strong>Créé le :</strong> {{ post.createdAt | date:'short' }}</p>
+              <!-- Vous pouvez ajouter des boutons pour éditer ou supprimer la publication -->
+            </li>
+          </ul>
+        </div>
+        <ng-template #noPosts>
+          <p>Aucune publication trouvée.</p>
+        </ng-template>
+      </ng-container>
+
+      <!-- Gestion des utilisateurs -->
+      <ng-container *ngIf="modalContent === 'users'">
+        <h2>Gestion des utilisateurs</h2>
+        <div *ngIf="users.length > 0; else noUsers">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <!-- Ajoutez d'autres colonnes si nécessaire -->
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                  <!-- Boutons pour éditer ou supprimer l'utilisateur -->
+                  <button class="btn btn-sm btn-warning">Éditer</button>
+                  <button class="btn btn-sm btn-danger">Supprimer</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noUsers>
+          <p>Aucun utilisateur trouvé.</p>
+        </ng-template>
+      </ng-container>
+    </div>
+  </div>
+</main>

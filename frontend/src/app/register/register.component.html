@@ -1,0 +1,84 @@
+<div class="register-container">
+  <h1>Inscription</h1>
+  <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+
+    <!-- Champ Prénom -->
+    <div class="form-group">
+      <label for="firstName">Prénom :</label>
+      <input
+        type="text"
+        id="firstName"
+        name="firstName"
+        class="form-control"
+        [(ngModel)]="user.firstName"
+        #firstName="ngModel"
+        required
+      />
+      <small *ngIf="firstName?.invalid && firstName?.touched" class="error-message">
+        Prénom obligatoire.
+      </small>
+    </div>
+
+    <!-- Champ Nom -->
+    <div class="form-group">
+      <label for="lastName">Nom :</label>
+      <input
+        type="text"
+        id="lastName"
+        name="lastName"
+        class="form-control"
+        [(ngModel)]="user.lastName"
+        #lastName="ngModel"
+        required
+      />
+      <small *ngIf="lastName?.invalid && lastName?.touched" class="error-message">
+        Nom obligatoire.
+      </small>
+    </div>
+
+    <!-- Champ Email -->
+    <div class="form-group">
+      <label for="email">Email :</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        class="form-control"
+        [(ngModel)]="user.email"
+        #email="ngModel"
+        required
+        email
+      />
+      <small *ngIf="email?.invalid && email?.touched" class="error-message">
+        Email valide obligatoire.
+      </small>
+    </div>
+
+    <!-- Champ Mot de Passe -->
+    <div class="form-group">
+      <label for="password">Mot de passe :</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-control"
+        [(ngModel)]="user.password"
+        #password="ngModel"
+        required
+        minlength="6"
+      />
+      <small *ngIf="password?.invalid && password?.touched" class="error-message">
+        Le mot de passe doit contenir au moins 6 caractères.
+      </small>
+    </div>
+
+    <!-- Bouton -->
+    <button type="submit" [disabled]="registerForm.invalid" class="btn btn-primary">
+      S'inscrire
+    </button>
+  </form>
+
+  <!-- Messages de retour -->
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+</div>

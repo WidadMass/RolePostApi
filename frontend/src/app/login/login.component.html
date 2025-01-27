@@ -1,0 +1,68 @@
+<header class="site-header">
+  <!-- Barre de marque / logo -->
+  <nav class="navbar">
+    <div class="brand">
+      <h1 class="brand-name">PostApi</h1>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="login-section">
+    <!-- Bloc contenant le formulaire de login -->
+    <div class="login-container">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <!-- Identifiant -->
+        <div class="form-group pill">
+          <span class="icon">
+            <i class="fas fa-user"></i>
+          </span>
+          <input
+            type="text"
+            formControlName="login"
+            placeholder="Identifiant"
+            required
+          />
+          <small *ngIf="loginForm.get('login')?.invalid && loginForm.get('login')?.touched" class="error-message">
+            Identifiant requis.
+          </small>
+        </div>
+
+        <!-- Mot de passe -->
+        <div class="form-group pill">
+          <span class="icon">
+            <i class="fas fa-lock"></i>
+          </span>
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="Mot de passe"
+            required
+          />
+          <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
+            Mot de passe requis.
+          </small>
+        </div>
+
+        <!-- Message d'erreur global -->
+        <div *ngIf="errorMessage" class="error-message-global">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Bouton Connexion -->
+        <button type="submit" [disabled]="loginForm.invalid" class="btn-connexion">
+          Connexion
+        </button>
+      </form>
+
+      <!-- Liens sous le formulaire -->
+      <div class="footer-links">
+        <!-- Redirection vers la page d'inscription -->
+        <a [routerLink]="['/register']" class="create-account-link">
+          Créer un compte
+        </a>
+        <a href="#" class="help-link">Besoin d'aide?</a>
+      </div>
+    </div>
+  </section>
+</main>
